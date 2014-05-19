@@ -6,13 +6,11 @@ var requestx = require('request');
 
 var app = express();
 
-
 app.use(cors());
 
 var closestData = {
-    distance: 9999999999999999999
+    distance: 9999999999999999999;
 };
-
 
 function stateToIDCode(state) {
     if (closestData.state === 'tas') {
@@ -30,7 +28,7 @@ function stateToIDCode(state) {
     } else if (closestData.state === 'nt') {
         return "IDD60801";
     } else if (closestData.state === 'act') {
-        return "IDT60801";
+        return "IDN60903"; 
     }
 };
 // app.get('/', function(req, res) {
@@ -82,7 +80,7 @@ app.get('/', function(request, response) {
    
     console.log(url);
     console.log(closestData);
-    
+
     // console.log(body);
         
     // });
