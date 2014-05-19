@@ -18,5 +18,10 @@
     "url": "https://github.com/yoik/bom-api/issues"
   },
   "homepage": "https://github.com/yoik/bom-api",
-  "description": "node wrapper for BOM (bereau of meteorology) api"
+  "description": "node wrapper for BOM (bereau of meteorology) api",
+  "dependencies": {
+    "cors": "^2.3.1",
+    "express": "^4.2.0",
+    "node-vincenty": "0.0.6"
+  }
 }
