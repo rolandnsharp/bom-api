@@ -2,11 +2,37 @@ var cors = require('cors');
 var express = require('express');
 var vincenty = require('node-vincenty');
 var bomdata = require('./bomdata.json');
+var requestx = require('request');
 
 var app = express();
 
+
 app.use(cors());
 
+var closestData = {
+    distance: 9999999999999999999
+};
+
+
+function stateToIDCode(state) {
+    if (closestData.state === 'tas') {
+        return "IDT60801";
+    } else if (closestData.state === 'vic') {
+        return "IDV60801";
+    } else if (closestData.state === 'nsw') {
+        return "IDN60801";
+    } else if (closestData.state === 'qld') {
+        return "IDQ60801";
+    } else if (closestData.state === 'sa') {
+        return "IDS60801";
+    } else if (closestData.state === 'wa') {
+        return "IDW60801";
+    } else if (closestData.state === 'nt') {
+        return "IDD60801";
+    } else if (closestData.state === 'act') {
+        return "IDT60801";
+    }
+};
 // app.get('/', function(req, res) {
 //     res.send('hello  <br />  /legislators?postcode=4000 <br /> for example.');
 // });
@@ -17,40 +43,49 @@ app.get('/', function(request, response) {
     var lat = request.query.lat;
     var lng = request.query.lng;
 
-    // console.log(lat, lng);
-
-
-    var lastDistance = 0;
-
     for (var state in bomdata) {
-
         for (var location in bomdata[state]) {
-            // console.log(bomdata[state][location]);
             if (bomdata[state][location].lat === 'exceeded limit' || bomdata[state][location].lat === "not found") {
-                //empty
-                // console.log(bomdata[state][location].lat);
-                // console.log(bomdata[state][location].lng);
+                //is empty, do nothing
             } else {
-
 
                 vincenty.distVincenty(lat, lng, bomdata[state][location].lat, bomdata[state][location].lng, function(distance) {
                     // console.log(distance);
 
-                    if (lastDistance < distance) {
-                        lastDistance = distance;
-                        console.log(lastDistance);
-                    }
-                    // console.log(lastDistance, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11");
+                    if (closestData.distance > distance) {
 
+                        // shortDistance = distance;
+                        console.log(state);
+                        console.log(location);
+                        console.log(closestData.distance);
+
+                        closestData = {
+                            state: state,
+                            location: location,
+                            siteNumber: bomdata[state][location].siteNumber,
+                            distance: distance,
+                            IDCode: stateToIDCode(state)
+                        };
+                    }
 
                 });
-
 
             }
         }
 
     }
-    console.log(lastDistance, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11");
+// http://www.bom.gov.au/catalogue/data-feeds.shtml
+
+    var url = 'http://www.bom.gov.au/fwo/'+closestData.IDCode+'/'+closestData.IDCode+'.'+closestData.siteNumber+'.json';
+    // requestx(url, function(error, response, body) {
+
+   
+    console.log(url);
+    console.log(closestData);
+    
+    // console.log(body);
+        
+    // });
 
 
     // if (lat && lng) {
