@@ -14,7 +14,6 @@ var IDCodes = {
 function getBomInfo(stateName, siteNumber, callback) {
 
 	console.log(stateName, siteNumber);
-
     var url = 'http://www.bom.gov.au/fwo/' + IDCodes[stateName] + '/' + IDCodes[stateName] + '.' + siteNumber + '.json';
 
     request(url, function(error, response, body) {
@@ -27,21 +26,8 @@ function getBomInfo(stateName, siteNumber, callback) {
     		rel_hum: observationData.rel_hum
     	};
 
-
-
-    	// JSON.parse(body).observations.data[0];
-    	// console.log(BomInfo);
-
-    	// var BomInfo = {
-     //    	air_temp: "air_temp",
-     //    	apparent_t: "apparent_t",
-     //    	rel_hum: "rel_hum"
-     //    };
-
         callback(null, bomInfo);
-
     });
-
 };
 
 module.exports = getBomInfo;
