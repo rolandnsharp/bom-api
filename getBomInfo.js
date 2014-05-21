@@ -40,7 +40,9 @@ function getBomInfo(stateName, siteNumber, callback) {
         };
 
 
-        callback(null, bomInfoArray);
+        // callback(null, bomInfoArray);
+        callback(null, observationData);
+     
     });
 };
 

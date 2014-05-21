@@ -3,8 +3,11 @@ var vincenty = require('node-vincenty');
 
 exports.createDistanceVincentyCallback = function(location, callback) {
 
-    return function (distance) {
-
+    return function(distance) {
+        // console.log(distance);
+        // if (distance > 0) {
+        //     console.log(location);
+        // }
         callback({
             location: location,
             distance: distance
@@ -13,7 +16,7 @@ exports.createDistanceVincentyCallback = function(location, callback) {
 
 }
 
-exports.getLocationDistances = function(lat, lng, location, callback){
+exports.getLocationDistances = function(lat, lng, location, callback) {
 
     if (location.lat === 'exceeded limit' || location.lat === "not found") {
         callback(null);
@@ -21,21 +24,22 @@ exports.getLocationDistances = function(lat, lng, location, callback){
     }
 
     vincenty.distVincenty(
-        lat, 
-        lng, 
-        location.lat, 
-        location.lng, 
-        exports.createDistanceVincentyCallback(location, callback)
+        lat,
+        lng,
+        location.lat,
+        location.lng,
+        this.createDistanceVincentyCallback(location, callback)
     );
 }
 
-exports.getClosestLocation = function(locations){
-    return locations.reduce(function(previous, item){
-        if(!item){
+exports.getClosestLocation = function(locations) {
+    return locations.reduce(function(previous, item) {
+
+        if (!item) {
             return previous;
         }
 
-        if(!previous || item.distance < previous.distance){
+        if (!previous || (previous && !previous.distance) || item.distance < previous.distance) {
             return item;
         }
 
@@ -43,24 +47,25 @@ exports.getClosestLocation = function(locations){
     });
 }
 
-exports.createWhenDoneCallback = function(count, callback){
+exports.createWhenDoneCallback = function(count, callback) {
     var results = [];
 
-    return function(result){
+    return function(result) {
         results.push(result);
-        if(results.length === count){
+        // console.log(result);
+        if (results.length === count) {
             callback(results);
         }
     };
 }
 
-exports.getLocationDistancesByState = function(lat, lng, stateName, callback){
+exports.getLocationDistancesByState = function(lat, lng, stateName, callback) {
     // console.log(Object.keys(bomdata).length);
 
     var state = bomdata[stateName],
         numLocations = Object.keys(state).length;
 
-    var done = exports.createWhenDoneCallback(numLocations, function(results){
+    var done = exports.createWhenDoneCallback(numLocations, function(results) {
 
         var result = exports.getClosestLocation(results);
         result.state = stateName;
@@ -76,5 +81,3 @@ exports.getLocationDistancesByState = function(lat, lng, stateName, callback){
         );
     }
 }
-
-
