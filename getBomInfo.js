@@ -20,18 +20,27 @@ function getBomInfo(stateName, siteNumber, callback) {
         try {
             var data = JSON.parse(body);
         } catch (error) {
-            callback('Incorrect state and siteNumber combination: '+error, null);
+            callback('Incorrect state and siteNumber combination: ' + error, null);
             return;
         }
-        var observationData = data.observations.data[0];
 
-        var bomInfo = {
-            air_temp: observationData.air_temp,
-            apparent_t: observationData.apparent_t,
-            rel_hum: observationData.rel_hum
+        var observationData = data.observations.data;
+
+
+        var bomInfoArray = [];
+        for (var i = 0; i < observationData.length; i++) {
+
+            var bomInfo = {
+                air_temp: observationData[i].air_temp,
+                apparent_t: observationData[i].apparent_t,
+                rel_hum: observationData[i].rel_hum,
+                local_date_time_full: observationData[i].local_date_time_full
+            };
+            bomInfoArray.push(bomInfo);
         };
 
-        callback(null, bomInfo);
+
+        callback(null, bomInfoArray);
     });
 };
 
