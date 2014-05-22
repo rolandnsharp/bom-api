@@ -1,6 +1,7 @@
 var request = require('request');
 var bomdata = require('./bomdata.json');
-var helperFunctions = require('./functions');
+var getLocationDistancesByState = require('./getLocationDistancesByState');
+var createWhenDoneCallback = require('./createWhenDoneCallback');
 
 var IDCodes = {
     tas: 'IDT60801',
@@ -14,9 +15,8 @@ var IDCodes = {
 };
 
 function getBomDataBySiteNumberState(stateName, siteNumber, callback) {
-    console.log(stateName, siteNumber);
     var url = 'http://www.bom.gov.au/fwo/' + IDCodes[stateName] + '/' + IDCodes[stateName] + '.' + siteNumber + '.json';
-    
+
     request(url, function(error, response, body) {
         try {
             var data = JSON.parse(body);
@@ -27,7 +27,7 @@ function getBomDataBySiteNumberState(stateName, siteNumber, callback) {
 
         var observationData = data.observations.data;
         var bomInfoArray = [];
-        
+
         for (var i = 0; i < observationData.length; i++) {
 
             var bomInfo = {
@@ -43,18 +43,17 @@ function getBomDataBySiteNumberState(stateName, siteNumber, callback) {
     });
 };
 
-function getBomDataByLatitudeLongitude(lat, lng) {
+function getBomDataByLatitudeLongitude(lat, lng, callback) {
     var numStates = Object.keys(bomdata).length;
 
-    var done = helperFunctions.createWhenDoneCallback(numStates, function(locations) {
-        var closest = helperFunctions.getClosestLocation(locations);
+    var done = createWhenDoneCallback(numStates, function(locations) {
+        var closest = getClosestLocation(locations);
         getBomDataBySiteNumberState(closest.state, closest.location.siteNumber, function(error, bomInfo) {
-            console.log(JSON.stringify(bomInfo));
-            return JSON.stringify(bomInfo);
+            callback(bomInfo);
         });
     });
     for (var stateName in bomdata) {
-        helperFunctions.getLocationDistancesByState(
+        getLocationDistancesByState(
             lat,
             lng,
             stateName,

@@ -1,7 +1,7 @@
 var url = require('url');
 var bomdata = require('./bomdata.json');
 var indexFunctions = require('./index');
-var helperFunctions = require('./functions');
+
 
 module.exports = function(request, response) {
 
@@ -15,22 +15,8 @@ module.exports = function(request, response) {
     var lat = parsedUrl.query.lat;
     var lng = parsedUrl.query.lng;
 
-    var numStates = Object.keys(bomdata).length;
-
-    var done = helperFunctions.createWhenDoneCallback(numStates, function(locations) {
-        var closest = helperFunctions.getClosestLocation(locations);
-
-        indexFunctions.getBomDataBySiteNumberState(closest.state, closest.location.siteNumber, function(error, bomInfo) {
-            response.end(JSON.stringify(bomInfo));
-        });
+    indexFunctions.getBomDataByLatitudeLongitude(lat, lng, function(data){
+        response.end(JSON.stringify(data))
     });
-    for (var stateName in bomdata) {
-        helperFunctions.getLocationDistancesByState(
-            lat,
-            lng,
-            stateName,
-            done
-        );
-    }
 
 }
