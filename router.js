@@ -1,6 +1,6 @@
 var url = require('url');
 var bomdata = require('./bomdata.json');
-var getBomInfo = require('./getBomInfo');
+var index = require('./index');
 var helperFunctions = require('./functions');
 
 module.exports = function(request, response) {
@@ -20,7 +20,7 @@ module.exports = function(request, response) {
     var done = helperFunctions.createWhenDoneCallback(numStates, function(locations) {
         var closest = helperFunctions.getClosestLocation(locations);
 
-        getBomInfo(closest.state, closest.location.siteNumber, function(error, bomInfo) {
+        index.getBomInfo(closest.state, closest.location.siteNumber, function(error, bomInfo) {
             response.end(JSON.stringify(bomInfo));
         });
     });
