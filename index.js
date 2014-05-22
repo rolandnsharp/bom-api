@@ -1,6 +1,6 @@
 var request = require('request');
 var bomdata = require('./bomdata.json');
-var f = require('./functions');
+var helperFunctions = require('./functions');
 
 var IDCodes = {
     tas: 'IDT60801',
@@ -13,11 +13,10 @@ var IDCodes = {
     act: 'IDN60903'
 };
 
-function getBomInfo(stateName, siteNumber, callback) {
-
+function getBomDataBySiteNumberState(stateName, siteNumber, callback) {
     console.log(stateName, siteNumber);
     var url = 'http://www.bom.gov.au/fwo/' + IDCodes[stateName] + '/' + IDCodes[stateName] + '.' + siteNumber + '.json';
-
+    
     request(url, function(error, response, body) {
         try {
             var data = JSON.parse(body);
@@ -28,33 +27,34 @@ function getBomInfo(stateName, siteNumber, callback) {
 
         var observationData = data.observations.data;
         var bomInfoArray = [];
+        
         for (var i = 0; i < observationData.length; i++) {
 
             var bomInfo = {
                 air_temp: observationData[i].air_temp,
                 apparent_t: observationData[i].apparent_t,
                 rel_hum: observationData[i].rel_hum,
-                local_date_time_full: observationData[i].local_date_time_full
+                local_date_time_full: observationData[i].local_date_time_full,
+                utc_date_time_full: observationData[i].aifstime_utc
             };
             bomInfoArray.push(bomInfo);
         };
         callback(null, bomInfoArray);
-
     });
 };
 
-function getClosestWeatherData(lat, lng) {
+function getBomDataByLatitudeLongitude(lat, lng) {
     var numStates = Object.keys(bomdata).length;
 
-    var done = f.createWhenDoneCallback(numStates, function(locations) {
-        var closest = f.getClosestLocation(locations);
-        getBomInfo(closest.state, closest.location.siteNumber, function(error, bomInfo) {
+    var done = helperFunctions.createWhenDoneCallback(numStates, function(locations) {
+        var closest = helperFunctions.getClosestLocation(locations);
+        getBomDataBySiteNumberState(closest.state, closest.location.siteNumber, function(error, bomInfo) {
             console.log(JSON.stringify(bomInfo));
             return JSON.stringify(bomInfo);
         });
     });
     for (var stateName in bomdata) {
-        f.getLocationDistancesByState(
+        helperFunctions.getLocationDistancesByState(
             lat,
             lng,
             stateName,
@@ -62,7 +62,8 @@ function getClosestWeatherData(lat, lng) {
         );
     }
 }
+
 module.exports = {
-    getBomInfo: getBomInfo,
-    getClosestWeatherData: getClosestWeatherData
+    getBomDataBySiteNumberState: getBomDataBySiteNumberState,
+    getBomDataByLatitudeLongitude: getBomDataByLatitudeLongitude
 };
