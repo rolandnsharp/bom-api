@@ -1,5 +1,4 @@
 createDistanceVincentyCallback = function(location, callback) {
-
     return function(distance) {
         callback({
             location: location,
