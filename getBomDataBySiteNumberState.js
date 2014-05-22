@@ -1,3 +1,5 @@
+var request = require('request');
+
 var IDCodes = {
     tas: 'IDT60801',
     vic: 'IDV60801',

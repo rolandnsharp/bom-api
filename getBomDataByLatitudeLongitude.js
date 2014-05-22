@@ -1,3 +1,6 @@
+var bomdata = require('./bomdata.json');
+var getBomDataBySiteNumberState = require('./getBomDataBySiteNumberState');
+
 function getBomDataByLatitudeLongitude(lat, lng, callback) {
     var numStates = Object.keys(bomdata).length;
 
