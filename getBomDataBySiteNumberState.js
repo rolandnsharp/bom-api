@@ -11,7 +11,7 @@ var IDCodes = {
     act: 'IDN60903'
 };
 
-function getBomDataBySiteNumberState(stateName, siteNumber, callback) {
+function getBomDataBySiteNumberState(siteNumber, stateName, callback) {
     var url = 'http://www.bom.gov.au/fwo/' + IDCodes[stateName] + '/' + IDCodes[stateName] + '.' + siteNumber + '.json';
 
     request(url, function(error, response, body) {

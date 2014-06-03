@@ -10,7 +10,7 @@ node wrapper for BOM (bereau of meteorology) api
 
 Example:
 
-    bom.getBomDataBySiteNumberState(stateName, siteNumber, function(error, data)){
+    bom.getBomDataBySiteNumberState(siteNumber, stateName, function(error, data)){
         // do stuff with data
     });
 

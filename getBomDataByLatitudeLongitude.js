@@ -8,7 +8,7 @@ function getBomDataByLatitudeLongitude(lat, lng, callback) {
 
     var done = createWhenDoneCallback(numStates, function(locations) {
         var closest = getClosestLocation(locations);
-        getBomDataBySiteNumberState(closest.state, closest.location.siteNumber, function(error, bomInfo) {
+        getBomDataBySiteNumberState(closest.location.siteNumber, closest.state, function(error, bomInfo) {
             callback(bomInfo);
         });
     });
